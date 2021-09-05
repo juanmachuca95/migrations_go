@@ -1,5 +1,8 @@
+package mensajes
 
-func GetGretting() Mensaje {
+
+func GetGrettingHandler(w http.ResponseWriter, r *http.Request) Mensaje {
+
 	mensaje := Mensaje {
 		mensaje: "Hola mundo desde mi api golang"
 	}

@@ -2,9 +2,11 @@ package api
 
 import (
 	"github.com/gorilla/mux"
+	"net/http"
+	"fmt"
 )
 
-func initRoute() *mux.Router {
+func InitRoute() *mux.Router {
 	r := mux.NewRouter()
 
 	// Routes
