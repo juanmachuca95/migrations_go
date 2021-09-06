@@ -23,7 +23,6 @@ func newServer(port string, r *mux.Router) *server {
 	return &server{s}
 }
 
-// Start runs ListenAndServe on the http.Server with graceful shutdown
 func (srv *server) Start() {
 	log.Println("starting API cmd")
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

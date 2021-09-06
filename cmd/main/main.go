@@ -9,10 +9,6 @@ import (
 
 func main(){
 	
-	//r := api.InitRoute()
-
-	//http.ListenAndServe(":8080", r)
-
 	port := os.Getenv("PORT")
 
 	if port == "" {
