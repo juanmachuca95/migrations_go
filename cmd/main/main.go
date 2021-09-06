@@ -2,14 +2,23 @@ package main
 
 import (
 	
-	api "hexagonal_go/api"
-	"net/http"
+	"hexagonal_go/api"
+	"os"
 	
 )
 
 func main(){
 	
-	r := api.InitRoute()
-	http.ListenAndServe(":8080", r)
+	//r := api.InitRoute()
+
+	//http.ListenAndServe(":8080", r)
+
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "8080"
+	}
+
+	api.Start(port)
 
 }
