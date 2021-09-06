@@ -24,10 +24,9 @@ func newServer(port string, r *mux.Router) *server {
 }
 
 func (srv *server) Start() {
-	log.Println("starting API cmd")
+	log.Printf("starting API on port %s", srv.Addr)
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("could not listen on %s due to %s", srv.Addr, err.Error())
 	}
-	log.Printf("cmd is ready to handle requests %s", srv.Addr)
 }
 
