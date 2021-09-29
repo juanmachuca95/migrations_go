@@ -2,14 +2,15 @@ package api
 
 import (
 	"github.com/gorilla/mux"
-	"hexagonal_go/mensajes/web"
+
+	mensajes "github.com/juanmachuca95/hexagonal_go/mensajes/web"
 )
 
 func InitRoute() *mux.Router {
-	r := mux.NewRouter()
+	mensajes := mensajes.NewMensajesHTTPServices()
 
-	// Routes
-	r.HandleFunc("/", web.GetGrettingHandler)
+	r := mux.NewRouter()
+	r.HandleFunc("/", mensajes.GetMensajeHandler)
 
 	return r
 }

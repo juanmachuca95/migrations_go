@@ -1,14 +1,13 @@
-package main 
+package main
 
 import (
-	
-	"hexagonal_go/api"
 	"os"
-	
+
+	"github.com/juanmachuca95/hexagonal_go/api"
 )
 
-func main(){
-	
+func main() {
+
 	port := os.Getenv("PORT")
 
 	if port == "" {
