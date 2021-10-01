@@ -18,7 +18,12 @@ func NewMensajesHTTPServices() *MensajesHTTPServices {
 }
 
 func (s *MensajesHTTPServices) GetMensajeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("funciona el handler")
+	//vars := mux.Vars(r)
+	w.WriteHeader(http.StatusOK)
+	var resp string
+	resp = s.gtw.GetGretting()
+
+	fmt.Fprintf(w, "%s\n", resp)
 }
 
 type Interface interface {

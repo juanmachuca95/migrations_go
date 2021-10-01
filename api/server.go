@@ -1,10 +1,11 @@
 package api
 
 import (
-	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"time"
-	"log"
+
+	"github.com/gorilla/mux"
 )
 
 type server struct {
@@ -29,4 +30,3 @@ func (srv *server) Start() {
 		log.Fatalf("could not listen on %s due to %s", srv.Addr, err.Error())
 	}
 }
-
