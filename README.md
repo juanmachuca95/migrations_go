@@ -6,12 +6,14 @@ Arqutectura hexagonal golang
 
     usefull link: https://blog.friendsofgo.tech/posts/como_crear_una_api_rest_en_golang/
 
-# go get -u github.com/gorilla/mux
+# Router Mux 
+    go get -u github.com/gorilla/mux
 
-Driver MySQL 
-# go get -u github.com/go-sql-driver/mysql
+# Driver MySQL 
 
-Variables de entorno .env
+    go get -u github.com/go-sql-driver/mysql
 
-# go get -u github.com/joho/godotenv
+# Variables de entorno .env
+
+    go get -u github.com/joho/godotenv
 
