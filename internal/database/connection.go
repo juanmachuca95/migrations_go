@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"database/sql"
@@ -7,15 +7,9 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 )
 
 func MySQLConnection() *sql.DB {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Cannot loading environment's variables")
-	}
-
 	user := os.Getenv("USUARIO")
 	password := os.Getenv("PASSWORD")
 	host := os.Getenv("HOST")
@@ -36,14 +30,4 @@ func MySQLConnection() *sql.DB {
 	}
 
 	return db
-}
-
-func main() {
-	db := MySQLConnection()
-
-	err := db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 }

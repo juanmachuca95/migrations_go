@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	internal "github.com/juanmachuca95/hexagonal_go/internal/database"
 	querys "github.com/juanmachuca95/hexagonal_go/mensajes/querys"
 )
 
@@ -12,11 +13,13 @@ type MensajesGateway interface {
 }
 
 type MensajesService struct {
-	sql.DB
+	*sql.DB
 }
 
 func NewMensajesGateway() MensajesGateway {
-	return &MensajesService{}
+	return &MensajesService{
+		internal.MySQLConnection(),
+	}
 }
 
 func (s *MensajesService) GetGretting() string {
