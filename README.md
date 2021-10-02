@@ -11,6 +11,7 @@ Arqutectura hexagonal golang
 Driver MySQL 
 # go get -u github.com/go-sql-driver/mysql
 
-Variables de entorno 
+Variables de entorno .env
 
 # go get -u github.com/joho/godotenv
+
