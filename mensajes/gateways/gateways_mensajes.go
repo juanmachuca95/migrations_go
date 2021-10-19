@@ -44,11 +44,3 @@ func (s *MensajesService) GetGretting() string {
 
 	return mensaje
 }
-
-/* func main() {
-	mensajeService := NewMensajesGateway()
-	resp := mensajeService.GetGretting()
-
-	fmt.Println(resp)
-}
-*/

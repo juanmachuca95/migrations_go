@@ -44,19 +44,3 @@ func (p *Persona) Saludar() string {
 	mensaje := fmt.Sprintf("Hola %s Como estás?", p.name)
 	return mensaje
 }
-
-/* func main() {
-	p1 := NewPersona("juan")
-	p2 := NewPersona("larua")
-
-	saludo := p1.Saludar()
-	fmt.Println(saludo)
-
-	saludo1 := p2.Saludar()
-	fmt.Println(saludo1)
-
-	newMensajesHTTPServices := NewMensajesHTTPServices()
-	mensaje := newMensajesHTTPServices.gtw.GetGretting()
-	fmt.Println(mensaje)
-}
-*/

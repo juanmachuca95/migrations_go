@@ -2,6 +2,7 @@ package login
 
 import (
 	"database/sql"
+	"log"
 	"os"
 	"time"
 
@@ -13,34 +14,34 @@ import (
 )
 
 type LoginGateways interface {
-	Login(username, password string) string
+	Login(username, password string) (string, error)
 }
 
 type LoginService struct {
 	*sql.DB
 }
 
-func NewLoginService() LoginGateways {
+func NewLoginGateways() LoginGateways {
 	return &LoginService{
 		internal.MySQLConnection(),
 	}
 }
 
-func (s *LoginService) Login(username, password string) string {
+func (s *LoginService) Login(username, password string) (string, error) {
 	var user models.User
 	stmt, err := s.Prepare(querys.GetUser())
 
 	if err != nil {
-		return err.Error()
+		log.Fatalf("Error al preparar la consulta, err: %v\n", err)
 	}
 
 	err = stmt.QueryRow(username).Scan(&user.Username, &user.Password, &user.Created_At, &user.Updated_At)
 	if err != nil {
-		return err.Error()
+		log.Fatalf("Error al ejecutar la consulta err: %v", err)
 	}
 
 	if !CheckPasswordHash(password, user.Password) {
-		return "Password Incorrect"
+		log.Fatal("Password incorrecta")
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -51,10 +52,10 @@ func (s *LoginService) Login(username, password string) string {
 
 	token_string, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
-		return err.Error()
+		log.Fatal(err)
 	}
 
-	return token_string
+	return token_string, nil
 }
 
 func CheckPasswordHash(password, hash string) bool {
