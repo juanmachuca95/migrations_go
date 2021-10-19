@@ -17,3 +17,11 @@ Arqutectura hexagonal golang
 
     go get -u github.com/joho/godotenv
 
+# JWT JSON Web Token
+
+    go get -u github.com/dgrijalva/jwt-go
+
+
+# Password Bcrypt 
+
+    go get golang.org/x/crypto/bcrypt
