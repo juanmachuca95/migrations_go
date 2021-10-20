@@ -1,6 +1,7 @@
 # hexagonal_go
 
-Arqutectura hexagonal golang 
+Arqutectura hexagonal golang. Documentación mysql driver 
+http://go-database-sql.org/index.html
 
 # Guide golang api rest basic
 
