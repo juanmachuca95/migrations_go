@@ -1,6 +1,6 @@
 # hexagonal_go
 
-Arqutectura hexagonal golang. Documentación mysql driver 
+Arquitectura hexagonal golang. Documentación mysql driver 
 http://go-database-sql.org/index.html
 Documentación: Obtener los valores de un body request from JSON.
 https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
