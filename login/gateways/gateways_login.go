@@ -2,7 +2,7 @@ package login
 
 import (
 	"database/sql"
-	"log"
+	"errors"
 	"os"
 	"time"
 
@@ -32,16 +32,16 @@ func (s *LoginService) Login(username, password string) (string, error) {
 	stmt, err := s.Prepare(querys.GetUser())
 
 	if err != nil {
-		log.Fatalf("Error al preparar la consulta, err: %v\n", err)
+		return "", err
 	}
 
-	err = stmt.QueryRow(username).Scan(&user.Username, &user.Password, &user.Created_At, &user.Updated_At)
+	err = stmt.QueryRow(username).Scan(&user.Username, &user.Password)
 	if err != nil {
-		log.Fatalf("Error al ejecutar la consulta err: %v", err)
+		return "", errors.New("Usuario no encontrado.")
 	}
 
 	if !CheckPasswordHash(password, user.Password) {
-		log.Fatal("Password incorrecta")
+		return "", errors.New("Credenciales erroneas.")
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -52,7 +52,7 @@ func (s *LoginService) Login(username, password string) (string, error) {
 
 	token_string, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	return token_string, nil

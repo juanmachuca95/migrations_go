@@ -1,11 +1,11 @@
 package login
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	gtw "github.com/juanmachuca95/hexagonal_go/login/gateways"
+	models "github.com/juanmachuca95/hexagonal_go/login/models"
 )
 
 type LoginHTTPServices struct {
@@ -19,17 +19,30 @@ func NewLoginService() *LoginHTTPServices {
 }
 
 func (s *LoginHTTPServices) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	var login models.Login
 
-	vars := mux.Vars(r)
-	username := vars["username"]
-	password := vars["password"]
-
-	res, err := s.gtw.Login(username, password)
+	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
-		fmt.Fprintf(w, "Authentication failed")
+		http.Error(w, err.Error(), http.StatusPartialContent)
 		return
 	}
 
-	fmt.Fprintf(w, "Authentication Success - Token: %s", res)
+	//fmt.Fprintf(w, "Username: %s - Password: %s", login.Username, login.Password)
+	res, err := s.gtw.Login(login.Username, login.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	resp := make(map[string]string)
+	resp["token"] = res
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		//log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(jsonResp)
 	return
 }

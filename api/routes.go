@@ -14,7 +14,11 @@ func InitRoute() *mux.Router {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", mensajes.GetMensajeHandler)
-	r.HandleFunc("/login", login.LoginHandler)
+
+	// LoginHTTPServices
+	r.HandleFunc("/login", login.LoginHandler).
+		Headers("Content-Type", "application/json").
+		Methods("POST")
 
 	return r
 }
