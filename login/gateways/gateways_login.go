@@ -35,6 +35,7 @@ func (s *LoginService) Login(username, password string) (string, error) {
 		return "", err
 	}
 
+	defer stmt.Close()
 	err = stmt.QueryRow(username).Scan(&user.Username, &user.Password)
 	if err != nil {
 		return "", errors.New("Usuario no encontrado.")
