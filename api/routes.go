@@ -5,6 +5,8 @@ import (
 
 	login "github.com/juanmachuca95/hexagonal_go/login/handlers"
 	mensajes "github.com/juanmachuca95/hexagonal_go/mensajes/handlers"
+
+	mdw "github.com/juanmachuca95/hexagonal_go/internal/middleware"
 )
 
 func InitRoute() *mux.Router {
@@ -13,10 +15,14 @@ func InitRoute() *mux.Router {
 	mensajes := mensajes.NewMensajesHTTPServices()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", mensajes.GetMensajeHandler)
+	// MessageHTTPServices
+	rMessage := r.PathPrefix("/message").Subrouter()
+	rMessage.HandleFunc("", mensajes.GetMensajeHandler).Methods("GET")
+	rMessage.Use(mdw.AuthValidToken)
 
 	// LoginHTTPServices
-	r.HandleFunc("/login", login.LoginHandler).
+	rLogin := r.PathPrefix("/login").Subrouter()
+	rLogin.HandleFunc("", login.LoginHandler).
 		Headers("Content-Type", "application/json").
 		Methods("POST")
 
