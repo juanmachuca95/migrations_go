@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	gtw "github.com/juanmachuca95/hexagonal_go/mensajes/gateways"
+	gtw "github.com/juanmachuca95/migrations_go/mensajes/gateways"
 )
 
 type MensajesHTTPServices struct {

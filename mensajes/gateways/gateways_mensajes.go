@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"log"
 
-	internal "github.com/juanmachuca95/hexagonal_go/internal/database"
-	querys "github.com/juanmachuca95/hexagonal_go/mensajes/querys"
+	internal "github.com/juanmachuca95/migrations_go/internal/database"
+	querys "github.com/juanmachuca95/migrations_go/mensajes/querys"
 )
 
 type MensajesGateway interface {

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	gtw "github.com/juanmachuca95/hexagonal_go/login/gateways"
-	models "github.com/juanmachuca95/hexagonal_go/login/models"
+	gtw "github.com/juanmachuca95/migrations_go/login/gateways"
+	models "github.com/juanmachuca95/migrations_go/login/models"
 )
 
 type LoginHTTPServices struct {

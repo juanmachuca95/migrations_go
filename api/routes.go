@@ -3,10 +3,10 @@ package api
 import (
 	"github.com/gorilla/mux"
 
-	login "github.com/juanmachuca95/hexagonal_go/login/handlers"
-	mensajes "github.com/juanmachuca95/hexagonal_go/mensajes/handlers"
+	login "github.com/juanmachuca95/migrations_go/login/handlers"
+	mensajes "github.com/juanmachuca95/migrations_go/mensajes/handlers"
 
-	mdw "github.com/juanmachuca95/hexagonal_go/internal/middleware"
+	mdw "github.com/juanmachuca95/migrations_go/internal/middleware"
 )
 
 func InitRoute() *mux.Router {

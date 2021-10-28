@@ -1,8 +1,0 @@
--- DATABASE GOLANG TEST -- 
-
-CREATE TABLE mensajes (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    mensaje VARCHAR(255) NOT NULL,
-    created_at DATETIME NULL,
-    updated_at DATETIME NULL
-);

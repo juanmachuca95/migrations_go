@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	internal "github.com/juanmachuca95/hexagonal_go/internal/database"
-	querys "github.com/juanmachuca95/hexagonal_go/login/querys"
-	models "github.com/juanmachuca95/hexagonal_go/users/models"
+	internal "github.com/juanmachuca95/migrations_go/internal/database"
+	models "github.com/juanmachuca95/migrations_go/login/models"
+	querys "github.com/juanmachuca95/migrations_go/login/querys"
 	"golang.org/x/crypto/bcrypt"
 )
 

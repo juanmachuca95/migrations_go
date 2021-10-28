@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/juanmachuca95/hexagonal_go/api"
+	"github.com/juanmachuca95/migrations_go/api"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-# hexagonal_go
+# migrations_go
 
 Arquitectura hexagonal golang. Documentación mysql driver 
 http://go-database-sql.org/index.html
