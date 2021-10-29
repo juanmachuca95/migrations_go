@@ -28,7 +28,7 @@ func NewLoginGateways() LoginGateways {
 }
 
 func (s *LoginService) Login(username, password string) (string, error) {
-	var user models.User
+	var user models.Login
 	stmt, err := s.Prepare(querys.GetUser())
 
 	if err != nil {
