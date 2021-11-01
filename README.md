@@ -30,11 +30,9 @@ https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
     go get golang.org/x/crypto/bcrypt
 
 
-# Example -- Request Return Login 
-Implementación de servicio de login con jwt web token.
+# Routes: Functions of migrations 
 
-| Username        | Password           | StatusCode         | Message                |
+| Route           | Handlers           | Actions            | Return                 |
 | --------------- |:------------------:| ------------------:|-----------------------:|
-| god username    | bad password       | 401 Unauthorized   | Credenciales erroneas. |                 
-| bad username    | god password       | 401 Unauthorized   | Usuario no encontrado. |
-| god username    | god password       | 200 StatusOK       | Json (token)           |
+| /users          | GetUsersHandler    | Migra usuarios.    |  true || error         | 
+

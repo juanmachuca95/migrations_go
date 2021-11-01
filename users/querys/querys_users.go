@@ -5,5 +5,5 @@ var GetUsers = func() string {
 }
 
 var CreateUsersSAS = func() string {
-	return "INSERT INTO sas_golang.users (id, user, name, cuit, email, password, activo, created_at, updated_at, imagen, sidebar) VALUES (?, ?,?,?,?,?,?,?,?,?,1)"
+	return "INSERT INTO sas_golang.users (id, user, name, cuit, email, password, activo, created_at, updated_at, imagen, sidebar) VALUES (?,?,?,?,?,?,?,?,?,?,1)"
 }
