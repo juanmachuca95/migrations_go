@@ -34,7 +34,7 @@ func InitRoute() *mux.Router {
 		data := page.Page{
 			Title: "By Juan Machuca",
 			Steps: []page.Step{
-				{Title: "Migrar usuarios", Done: true, Resource: "/user"},
+				{Title: "Migrar usuarios", Done: true, Resource: "/users"},
 				{Title: "Migrar personas", Done: true, Resource: "/personas"},
 			},
 		}
