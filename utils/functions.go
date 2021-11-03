@@ -1,5 +1,7 @@
 package utils
 
+import "log"
+
 func LocalidadStored(localidad string) string {
 	var result string
 	var localidades = map[string]string{
@@ -90,4 +92,26 @@ func LocalidadesFix(localidad string) string {
 		localidadfixed = localidad
 	}
 	return localidadfixed
+}
+
+func TipoDocumento(tipoDocId int) string {
+	var documento string
+	var tipoDocumentos = map[int]string{
+		1: "DNI",
+		2: "CUIL",
+		3: "CUIT",
+		4: "LE",
+		5: "CDI",
+	}
+
+	for index, value := range tipoDocumentos {
+		if tipoDocId == index {
+			documento = value
+		}
+	}
+
+	if documento == "" {
+		log.Fatal("No se ha podido identificar el documento almacenado")
+	}
+	return documento
 }

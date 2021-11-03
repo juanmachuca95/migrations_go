@@ -15,7 +15,7 @@ var GetDatosPersonaFisica = func() string {
 	piso, dpto, users_cargo, created_at, updated_at
 */
 var CreatePersonasSAS = func() string {
-	return "INSERT INTO personas (id, cuit, nombre, apellido, documento_tipo, documento_numero, fecha_nacimiento, telefono, email, profesion, paiss_id, estado_civil, ciudads_id, calle, altura, piso, dpto, users_cargo, created_at, updated_at) VALUES (?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	return "INSERT INTO personas (id, cuit, nombre, apellido, documento_tipo, documento_numero, fecha_nacimiento, telefono, email, profesion, paiss_id, estado_civil, ciudads_id, calle, altura, piso, dpto, users_cargo, created_at, updated_at, tipo_persona, tipo_cuit_cuil ) VALUES (?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 }
 
 /* Consultas auxiliares a personas*/

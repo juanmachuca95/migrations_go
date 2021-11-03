@@ -6,19 +6,17 @@ import (
 
 	"github.com/gorilla/mux"
 
-	login "github.com/juanmachuca95/migrations_go/login/handlers"
-	mensajes "github.com/juanmachuca95/migrations_go/mensajes/handlers"
 	personas "github.com/juanmachuca95/migrations_go/personas/handlers"
 	users "github.com/juanmachuca95/migrations_go/users/handlers"
 
-	mdw "github.com/juanmachuca95/migrations_go/internal/middleware"
+	/*Template*/
+	page "github.com/juanmachuca95/migrations_go/pages"
+	template "github.com/juanmachuca95/migrations_go/templates"
 )
 
 func InitRoute() *mux.Router {
 	r := mux.NewRouter()
 
-	login := login.NewLoginService()
-	mensajes := mensajes.NewMensajesHTTPServices()
 	users := users.NewUsersHTTPService()
 	personas := personas.NewPersonasHTTPServices()
 
@@ -27,10 +25,21 @@ func InitRoute() *mux.Router {
 		fmt.Fprint(w, "Hello: "+r.Host)
 	})
 
-	// MessageHTTPServices
-	rMessage := r.PathPrefix("/message").Subrouter()
-	rMessage.HandleFunc("", mensajes.GetMensajeHandler).Methods("GET")
-	rMessage.Use(mdw.AuthValidToken)
+	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/",
+		http.FileServer(http.Dir("./assets/"))))
+
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		tmpl := template.Template()
+
+		data := page.Page{
+			Title: "By Juan Machuca",
+			Steps: []page.Step{
+				{Title: "Migrar usuarios", Done: true, Resource: "/user"},
+				{Title: "Migrar personas", Done: true, Resource: "/personas"},
+			},
+		}
+		tmpl.Execute(w, data)
+	})
 
 	// UsersHTTPServices
 	rUsers := r.PathPrefix("/users").Subrouter()
@@ -39,12 +48,6 @@ func InitRoute() *mux.Router {
 	// PersonasHTTPServices
 	rPersona := r.PathPrefix("/personas").Subrouter()
 	rPersona.HandleFunc("", personas.GetPersonasHandler).Methods("GET")
-
-	// LoginHTTPServices
-	rLogin := r.PathPrefix("/login").Subrouter()
-	rLogin.HandleFunc("", login.LoginHandler).
-		Headers("Content-Type", "application/json").
-		Methods("POST")
 
 	return r
 }

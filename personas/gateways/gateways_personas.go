@@ -99,9 +99,10 @@ func (s *ServicePersona) CreatePersonasSAS(personas []models.Persona) (bool, err
 		log.Fatalf("Ha ocurrido un error al preparar la consulta (get provincia Id - ciudad Id  de persona) - error : %v", err)
 	}
 	defer stmt3.Close()
+
+	var tipo_persona = "Persona Fisica"
 	for _, value := range personas {
 		var personaFisica models.PersonaFisica
-		/* var nacionalidad string */
 		var nacionalidad_id, provincias_id, ciudads_id int
 
 		/*Provincia & ciudad*/
@@ -131,7 +132,9 @@ func (s *ServicePersona) CreatePersonasSAS(personas []models.Persona) (bool, err
 		}
 
 		// Create Persona
-		_, err = stmt.Exec(value.Id, value.Cuit_Cuil_Cdi, personaFisica.Nombre, personaFisica.Apellido, value.Tipo_Doc, value.Documento, personaFisica.Fecha_Nac, value.Telefono, value.Email, personaFisica.Profesion, nacionalidad_id, personaFisica.Estado_Civil, 1, value.Calle, value.Altura, value.Piso, value.Depto, 1, value.Created_At, value.Updated_At)
+		documento_tipo := utils.TipoDocumento(value.Tipo_Doc)
+		tipo_cuit_cuil := utils.TipoDocumento(value.Tipo_Cuit_Cuil_Cdi)
+		_, err = stmt.Exec(value.Id, value.Cuit_Cuil_Cdi, personaFisica.Nombre, personaFisica.Apellido, documento_tipo, value.Documento, personaFisica.Fecha_Nac, value.Telefono, value.Email, personaFisica.Profesion, nacionalidad_id, personaFisica.Estado_Civil, ciudads_id, value.Calle, value.Altura, value.Piso, value.Depto, 1, value.Created_At, value.Updated_At, tipo_persona, tipo_cuit_cuil)
 		if err != nil {
 			errLog := fmt.Sprintf("Ha ocurrido un error al crear persona id: %d - error: %v", value.Id, err)
 			s.Logg(errLog)
