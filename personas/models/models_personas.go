@@ -20,13 +20,13 @@ type Persona struct {
 }
 
 type PersonaFisica struct {
-	Estado_Civil string `json:"estado_civil"`
-	Profesion    string `json:"profesion"`
-	Nombre       string `json:"nombre"`
-	Apellido     string `json:"apellido"`
-	Nacionalidad string `json:"nacionalidad"`
-	Fecha_Nac    string `json:"fecha_nac"`
-	Block        int    `json:"block"`
-	Created_At   string `json:"created_at"`
-	Updated_At   string `json:"updated_at"`
+	Estado_Civil string  `json:"estado_civil"`
+	Profesion    string  `json:"profesion"`
+	Nombre       string  `json:"nombre"`
+	Apellido     string  `json:"apellido"`
+	Nacionalidad string  `json:"nacionalidad"`
+	Fecha_Nac    string  `json:"fecha_nac"`
+	Block        int     `json:"block"`
+	Created_At   *string `json:"created_at"`
+	Updated_At   *string `json:"updated_at"`
 }

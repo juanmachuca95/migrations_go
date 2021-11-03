@@ -18,7 +18,7 @@ func MySQLConnectionDatabase2() *sql.DB {
 
 	log.Println(user, password, host, port, dbname)
 
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, dbname)) // conexion a base de datos local sin password
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, password, host, port, dbname)) // conexion a base de datos local sin password
 
 	if err != nil {
 		log.Fatal(err.Error())

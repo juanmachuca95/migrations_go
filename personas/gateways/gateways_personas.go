@@ -2,9 +2,11 @@ package personas
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	models "github.com/juanmachuca95/migrations_go/personas/models"
+	"github.com/juanmachuca95/migrations_go/utils"
 
 	internal "github.com/juanmachuca95/migrations_go/internal/database"
 	internal2 "github.com/juanmachuca95/migrations_go/internal/database2"
@@ -12,14 +14,17 @@ import (
 )
 
 type PersonasGateway interface {
-	GetPersonas() (string, error)
+	GetPersonas() (bool, error)
 	CreatePersonasSAS([]models.Persona) (bool, error)
 	GetDatosPersonaFisica(int) (models.PersonaFisica, error)
+
+	/*Log register*/
+	Logg(string) bool
 }
 
 type ServicePersona struct {
-	db  *sql.DB
-	db2 *sql.DB
+	db  *sql.DB // Justicia
+	db2 *sql.DB // Sas
 }
 
 func NewPersonaGateway() PersonasGateway {
@@ -33,7 +38,7 @@ func NewPersonaGateway() PersonasGateway {
 	Recupera los registros de persona de la base datos justicia
 	(id, idTipoDoc, documento, provincia, localidad, calle, altura, piso, depto, block, created_at, updated_at, tipoCuitCuilCdi, CuitCuilCdi, email, telefono);
 */
-func (s *ServicePersona) GetPersonas() (string, error) {
+func (s *ServicePersona) GetPersonas() (bool, error) {
 	stmt, err := s.db.Prepare(querys.GetPersonas())
 	if err != nil {
 		log.Fatalf("Ha ocurrido un error al preparar la consulta: %v", err)
@@ -63,7 +68,7 @@ func (s *ServicePersona) GetPersonas() (string, error) {
 	/* Corregir */
 	s.CreatePersonasSAS(personas)
 
-	return "hola", nil
+	return true, nil
 }
 
 /*
@@ -79,24 +84,59 @@ func (s *ServicePersona) CreatePersonasSAS(personas []models.Persona) (bool, err
 
 	stmt, err := s.db2.Prepare(querys.CreatePersonasSAS())
 	if err != nil {
-		log.Fatalf("Ha ocurrido un error al preparar la consulta: %v", err)
+		log.Fatalf("Ha ocurrido un error al preparar la consulta (create persona): %v", err)
 	}
 	defer stmt.Close()
 
+	stmt2, err := s.db2.Prepare(querys.GetPaisIdPersona())
+	if err != nil {
+		log.Fatalf("Ha ocurrido un error al preparar la consulta (get pais id persona): %v", err)
+	}
+	defer stmt.Close()
+
+	stmt3, err := s.db2.Prepare(querys.GetProvinciaIdCiudadIdPersona())
+	if err != nil {
+		log.Fatalf("Ha ocurrido un error al preparar la consulta (get provincia Id - ciudad Id  de persona) - error : %v", err)
+	}
+	defer stmt3.Close()
 	for _, value := range personas {
 		var personaFisica models.PersonaFisica
+		/* var nacionalidad string */
+		var nacionalidad_id, provincias_id, ciudads_id int
+
+		/*Provincia & ciudad*/
+		localidad := utils.LocalidadesFix(*value.Localidad)
+		localidad = "%" + localidad + "%"
+		err = stmt3.QueryRow(value.Provincia, localidad).Scan(&provincias_id, &ciudads_id)
+		if err != nil {
+			errLog := fmt.Sprintf("Ha ocurrido un error al intentar obtener provincia %s y ciudad %s de persona id: %d - error: %v", *value.Provincia, *value.Localidad, value.Id, err)
+			s.Logg(errLog)
+		}
 
 		// Datos persona fisica
 		personaFisica, err := s.GetDatosPersonaFisica(value.Id)
 		if err != nil {
-			log.Fatalf("Ha ocurrido un error al obtener persona fisica id: %d - error: %v", value.Id, err)
+			errLog := fmt.Sprintf("Ha ocurrido un error al obtener persona fisica - persona id: %d - error: %v", value.Id, err)
+			s.Logg(errLog)
+		}
+
+		// Nacionalidad
+		if personaFisica.Nacionalidad == "Antartida" || personaFisica.Nacionalidad == "Antártida" {
+			personaFisica.Nacionalidad = "Argentina"
+		}
+		err = stmt2.QueryRow(personaFisica.Nacionalidad).Scan(&nacionalidad_id)
+		if err != nil {
+			errLog := fmt.Sprintf("Ha ocurrido un error al intentar obtener pais %s de persona id: %d - error: %v", personaFisica.Nacionalidad, value.Id, err)
+			s.Logg(errLog)
 		}
 
 		// Create Persona
-		_, err = stmt.Exec(value.Id, value.Cuit_Cuil_Cdi, personaFisica.Nombre, personaFisica.Apellido, value.Tipo_Doc, value.Documento, personaFisica.Fecha_Nac, value.Telefono, value.Email, personaFisica.Profesion, 1, personaFisica.Estado_Civil, 1, value.Calle, value.Altura, value.Piso, value.Depto, 1, value.Created_At, value.Updated_At)
+		_, err = stmt.Exec(value.Id, value.Cuit_Cuil_Cdi, personaFisica.Nombre, personaFisica.Apellido, value.Tipo_Doc, value.Documento, personaFisica.Fecha_Nac, value.Telefono, value.Email, personaFisica.Profesion, nacionalidad_id, personaFisica.Estado_Civil, 1, value.Calle, value.Altura, value.Piso, value.Depto, 1, value.Created_At, value.Updated_At)
 		if err != nil {
-			log.Fatalf("Ha ocurrido un error al crear persona id: %d - error: %v", value.Id, err)
+			errLog := fmt.Sprintf("Ha ocurrido un error al crear persona id: %d - error: %v", value.Id, err)
+			s.Logg(errLog)
 		}
+
 	}
 
 	return true, nil
@@ -106,15 +146,34 @@ func (s *ServicePersona) CreatePersonasSAS(personas []models.Persona) (bool, err
 func (s *ServicePersona) GetDatosPersonaFisica(personas_id int) (models.PersonaFisica, error) {
 	stmt, err := s.db.Prepare(querys.GetDatosPersonaFisica())
 	if err != nil {
-		log.Fatalf("Ha ocurrido un error al preparar la consulta en tabla saspersonasfisicas: %v", err)
+		errLog := fmt.Sprintf("Ha ocurrido un error al preparar la consulta en tabla saspersonasfisicas: %v", err)
+		s.Logg(errLog)
 	}
 
 	defer stmt.Close()
 	var personaFisica models.PersonaFisica
 	err = stmt.QueryRow(personas_id).Scan(&personaFisica.Estado_Civil, &personaFisica.Profesion, &personaFisica.Nombre, &personaFisica.Apellido, &personaFisica.Nacionalidad, &personaFisica.Fecha_Nac, &personaFisica.Block, &personaFisica.Created_At, &personaFisica.Updated_At)
 	if err != nil {
-		log.Fatalf("Ha ocurrido un error al ejecutar la consulta en tabla saspersonasfisicas: %v", err)
+		errLog := fmt.Sprintf("Ha ocurrido un error al ejecutar la consulta en tabla saspersonasfisicas: %v", err)
+		s.Logg(errLog)
 	}
 
 	return personaFisica, nil
+}
+
+/* Registar los logs error de migrations */
+func (s *ServicePersona) Logg(message string) bool {
+	stmt, err := s.db2.Prepare("INSERT INTO migrations_logs (error) VALUES (?)")
+	if err != nil {
+		log.Fatalf("Error al preparar la consulta")
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(message)
+	if err != nil {
+		log.Fatalf("Error al registrar el error en la base de datos error: %v", err)
+	}
+	log.Println(message)
+
+	return true
 }
