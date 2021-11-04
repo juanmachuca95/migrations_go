@@ -115,3 +115,26 @@ func TipoDocumento(tipoDocId int) string {
 	}
 	return documento
 }
+
+/* func Estados(){
+	var documento string
+	var tipoDocumentos = map[int]string{
+		1: "DNI",
+		2: "CUIL",
+		3: "CUIT",
+		4: "LE",
+		5: "CDI",
+	}
+
+	for index, value := range tipoDocumentos {
+		if tipoDocId == index {
+			documento = value
+		}
+	}
+
+	if documento == "" {
+		log.Fatal("No se ha podido identificar el documento almacenado")
+	}
+	return documento
+}
+*/

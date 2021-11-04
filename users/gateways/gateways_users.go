@@ -33,8 +33,8 @@ func (s *UsersService) GetUsers() ([]models.User, error) {
 	if err != nil {
 		log.Fatalf("Ha ocurrido un error al ejecutar la consulta: %v", err)
 	}
-
 	defer rows.Close()
+
 	var user models.User
 	for rows.Next() {
 		err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.Block, &user.Confirmed, &user.Confirmation_Code, &user.Remember_Token, &user.Created_At, &user.Updated_At, &user.Apellido, &user.Img_Url, &user.Razon_Social, &user.Cuit, &user.Autorizado_Entrar)

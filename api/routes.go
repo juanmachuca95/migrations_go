@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 
 	personas "github.com/juanmachuca95/migrations_go/personas/handlers"
+	sas "github.com/juanmachuca95/migrations_go/sas/handlers"
 	users "github.com/juanmachuca95/migrations_go/users/handlers"
 
 	/*Template*/
@@ -17,6 +18,7 @@ import (
 func InitRoute() *mux.Router {
 	r := mux.NewRouter()
 
+	sas := sas.NewSasHTTPService()
 	users := users.NewUsersHTTPService()
 	personas := personas.NewPersonasHTTPServices()
 
@@ -34,12 +36,16 @@ func InitRoute() *mux.Router {
 		data := page.Page{
 			Title: "By Juan Machuca",
 			Steps: []page.Step{
-				{Title: "Migrar usuarios", Done: false, Resource: "/users"},
-				{Title: "Migrar personas", Done: true, Resource: "/personas"},
+				{Title: "Migrar usuarios", Done: true, Resource: "/users"},
+				{Title: "Migrar personas", Done: false, Resource: "/personas"},
+				{Title: "Migrar usuarios", Done: false, Resource: "/sas"},
 			},
 		}
 		tmpl.Execute(w, data)
 	})
+
+	// SasHTTPServices
+	r.HandleFunc("/sas", sas.GetSasHandler).Methods("GET")
 
 	// UsersHTTPServices
 	rUsers := r.PathPrefix("/users").Subrouter()
