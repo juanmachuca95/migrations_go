@@ -11,7 +11,7 @@ import (
 )
 
 type UsersGateway interface {
-	GetUsers() (bool, error)
+	GetUsers() ([]models.User, error)
 	CreateUsersSAS([]models.User) (bool, error)
 }
 
@@ -27,7 +27,7 @@ func NewUsersGateway() UsersGateway {
 	}
 }
 
-func (s *UsersService) GetUsers() (bool, error) {
+func (s *UsersService) GetUsers() ([]models.User, error) {
 	var users []models.User
 	rows, err := s.db.Query(querys.GetUsers())
 	if err != nil {
@@ -35,14 +35,12 @@ func (s *UsersService) GetUsers() (bool, error) {
 	}
 
 	defer rows.Close()
-	var i = 0
 	var user models.User
 	for rows.Next() {
 		err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.Block, &user.Confirmed, &user.Confirmation_Code, &user.Remember_Token, &user.Created_At, &user.Updated_At, &user.Apellido, &user.Img_Url, &user.Razon_Social, &user.Cuit, &user.Autorizado_Entrar)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Error al scanear usuario: ", err)
 		}
-		i++
 		users = append(users, user)
 	}
 
@@ -51,12 +49,7 @@ func (s *UsersService) GetUsers() (bool, error) {
 		log.Fatal(err)
 	}
 
-	resp, err := s.CreateUsersSAS(users)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return resp, nil
+	return users, nil
 }
 
 /*

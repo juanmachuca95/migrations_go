@@ -1,10 +1,10 @@
 package users
 
 import (
-	"log"
 	"net/http"
 
 	gtw "github.com/juanmachuca95/migrations_go/users/gateways"
+	users "github.com/juanmachuca95/migrations_go/users/models"
 )
 
 type UsersHTTPService struct {
@@ -18,14 +18,17 @@ func NewUsersHTTPService() *UsersHTTPService {
 }
 
 func (s *UsersHTTPService) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
-
-	resp, err := s.gtw.GetUsers()
+	var users []users.User
+	users, err := s.gtw.GetUsers()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	log.Println(resp)
+	_, err = s.gtw.CreateUsersSAS(users)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
 	w.WriteHeader(http.StatusOK)
 }
