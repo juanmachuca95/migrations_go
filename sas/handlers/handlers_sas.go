@@ -30,6 +30,11 @@ func (s *SasHTTPService) GetSasHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
+	_, err = s.gtw.CreateSAS(sasforms)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
 	jsonResp, err := json.Marshal(sasforms)
 	if err != nil {
 		log.Fatalf("Error happened in JSON marshal. Err: %s", err)

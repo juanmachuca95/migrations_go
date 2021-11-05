@@ -116,25 +116,28 @@ func TipoDocumento(tipoDocId int) string {
 	return documento
 }
 
-/* func Estados(){
-	var documento string
-	var tipoDocumentos = map[int]string{
-		1: "DNI",
-		2: "CUIL",
-		3: "CUIT",
-		4: "LE",
-		5: "CDI",
+func Month(month string) int {
+	var number_month int
+	var months = map[int]string{
+		1:  "Enero",
+		2:  "Febrero",
+		3:  "Marzo",
+		4:  "Abril",
+		5:  "Mayo",
+		6:  "Junio",
+		7:  "Julio",
+		8:  "Agosto",
+		9:  "Septiembre",
+		10: "Octubre",
+		11: "Noviembre",
+		12: "Diciembre",
 	}
 
-	for index, value := range tipoDocumentos {
-		if tipoDocId == index {
-			documento = value
+	for index, value := range months {
+		if month == value {
+			number_month = index
 		}
 	}
 
-	if documento == "" {
-		log.Fatal("No se ha podido identificar el documento almacenado")
-	}
-	return documento
+	return number_month
 }
-*/
