@@ -167,7 +167,10 @@ func (s *ServiceSas) CreateSAS(sasforms []models.Sasform) (bool, error) {
 			// Fecha Cierre Fiscal
 			fecha_cierre_ejercicios_id = s.GetFechaCierreFiscal(*value.Fecha_Cierre_Fiscal)
 
-			_, err := stmt1.Exec(value.Id, value.Razon_Social, value.Fecha_Firma, entidad_certificantes_id, tipo_instrumentos_id, objeto_societarios_id, firma_ciudads_id, fecha_cierre_ejercicios_id, value.Monto_Minimo)
+			// Sede Ciudad 
+			sede_ciudads_id := s.GetFirmaCiudadId(value.)
+
+			_, err := stmt1.Exec(value.Id, value.Razon_Social, value.Fecha_Firma, entidad_certificantes_id, tipo_instrumentos_id, objeto_societarios_id, firma_ciudads_id, fecha_cierre_ejercicios_id, value.Monto_Minimo, value.Peso_Num, )
 			if err != nil {
 				errLog := fmt.Sprintf("Ha ocurrido un error al insertar sas id: %d - error: %s", value.Id, err)
 				s.Logg(errLog)
