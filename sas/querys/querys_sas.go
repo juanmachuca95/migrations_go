@@ -17,7 +17,7 @@ var GetObjetoSocietarioId = func() string {
 	return "SELECT id FROM objeto_societarios WHERE objeto_societario=?"
 }
 
-var GetFirmaCiudadId = func() string {
+var GetCiudadId = func() string {
 	return "SELECT id FROM ciudads WHERE ciudad=?"
 }
 
