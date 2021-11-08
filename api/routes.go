@@ -36,9 +36,9 @@ func InitRoute() *mux.Router {
 		data := page.Page{
 			Title: "By Juan Machuca",
 			Steps: []page.Step{
-				{Title: "Migrar usuarios", Done: true, Resource: "/users"},
-				{Title: "Migrar personas", Done: false, Resource: "/personas"},
-				{Title: "Migrar usuarios", Done: false, Resource: "/sas"},
+				{Title: "Migrar Usuarios", Done: true, Resource: "/users"},
+				{Title: "Migrar Personas", Done: false, Resource: "/personas"},
+				{Title: "Migrar SAS", Done: false, Resource: "/sas"},
 			},
 		}
 		tmpl.Execute(w, data)
