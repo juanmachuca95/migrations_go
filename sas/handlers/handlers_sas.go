@@ -24,13 +24,8 @@ func (s *SasHTTPService) GetSasHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var sasforms []models.Sasform
-	sasforms, err := s.gtw.GetSas()
+	sasforms, err := s.gtw.GetSas() // Obtiene todas las sas de justicia
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	_, err = s.gtw.CreateSAS(sasforms)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -39,5 +34,11 @@ func (s *SasHTTPService) GetSasHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
 	}
+
+	_, err = s.gtw.CreateSAS(sasforms) // Insert de sas en bd sass
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
 	w.Write(jsonResp)
 }

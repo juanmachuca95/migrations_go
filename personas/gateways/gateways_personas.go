@@ -100,7 +100,7 @@ func (s *ServicePersona) CreatePersonasSAS(personas []models.Persona) (bool, err
 	}
 	defer stmt3.Close()
 
-	var tipo_persona = "Persona Fisica"
+	var tipo_persona = "FISICA"
 	for _, value := range personas {
 		var personaFisica models.PersonaFisica
 		var nacionalidad_id, provincias_id, ciudads_id int
