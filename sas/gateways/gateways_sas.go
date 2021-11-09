@@ -97,7 +97,17 @@ func (s *ServiceSas) CreateSAS(sasforms []models.Sasform) (bool, error) {
 	var entidad_certificantes_id = 1 // Escribano
 	var tipo_instrumentos_id = 1     // Instrumento Privado
 	var homonimia = 1                // Homonimia true
-	var objeto_societarios_id, sede_ciudads_id, regimen_tributario_rentas_id, bancos_sucursals_id int
+	var (
+		objeto_societarios_id,
+		regimen_tributario_rentas_id int
+	)
+
+	var (
+		firma_ciudads_id,
+		fecha_cierre_ejercicios_id,
+		bancos_sucursals_id,
+		sede_ciudads_id sql.NullInt64
+	)
 
 	/*Prepare consultas*/
 	stmt1, err := s.db2.Prepare(querys.CreateSAS())
@@ -138,45 +148,35 @@ func (s *ServiceSas) CreateSAS(sasforms []models.Sasform) (bool, error) {
 
 	for _, value := range sasforms {
 		log.Println(value.Id_Estado, value.Id)
-		if value.Id_Estado > 2 && value.Id_Estado < 6 { // Ignora estados 6: expirado, 0: borrador, 1: presentar;
+		if value.Id_Estado <= 6 {
 
 			// Objeto societario
-			if value.Objeto_Societario != nil {
+			if value.Objeto_Societario.String != "" {
 				objeto_societarios_id = objeto_especifico_id
 			} else {
 				objeto_societarios_id = objeto_amplio_id
 			}
 
 			// Firma ciudad
-			if value.Lugar_Firma == nil {
-				log.Fatal("vacio lugar firma")
-			}
-			firma_ciudads_id := s.GetCiudadId(*value.Lugar_Firma, stmt_ciudad)
+			firma_ciudads_id = s.GetCiudadId(value.Lugar_Firma.String, stmt_ciudad)
 
 			// Fecha Cierre Fiscal
-			if value.Fecha_Cierre_Fiscal == nil {
-				log.Fatal("vacio fecha cierre fiscal")
-			}
-			fecha_cierre_ejercicios_id, err := s.GetFechaCierreFiscal(*value.Fecha_Cierre_Fiscal, stmt_fecha_cierre)
-			if err != nil {
-				s.CreateFechaCierreFiscal(*value.Fecha_Cierre_Fiscal, stmt_fecha_cierre1)
-				fecha_cierre_ejercicios_id, _ = s.GetFechaCierreFiscal(*value.Fecha_Cierre_Fiscal, stmt_fecha_cierre)
+			if value.Fecha_Cierre_Fiscal.String != "" {
+				fecha_cierre_ejercicios_id, err = s.GetFechaCierreFiscal(value.Fecha_Cierre_Fiscal.String, stmt_fecha_cierre)
+				if err != nil {
+					s.CreateFechaCierreFiscal(value.Fecha_Cierre_Fiscal.String, stmt_fecha_cierre1)
+					fecha_cierre_ejercicios_id, _ = s.GetFechaCierreFiscal(value.Fecha_Cierre_Fiscal.String, stmt_fecha_cierre)
+				}
 			}
 
 			// Sede Ciudad SAS
-			if value.Localidad == nil {
-				log.Fatal("vacio localidad")
-			}
-			sede_ciudads_id = s.GetCiudadId(*value.Localidad, stmt_ciudad)
+			sede_ciudads_id = s.GetCiudadId(value.Localidad.String, stmt_ciudad)
 
 			// Regimen tributario
-			if *value.Convenio_Rentas == "" {
-				log.Fatal("vacio convenio")
-			}
-			regimen_tributario_rentas_id = s.GetRegimenTributarioId(*value.Convenio_Rentas, stmt_regimen)
+			regimen_tributario_rentas_id = s.GetRegimenTributarioId(value.Convenio_Rentas.String, stmt_regimen)
 
 			// Sucursales banco
-			bancos_sucursals_id = s.GetBancoSucursalId(*value.Sucursal_Banco, stmt_banco)
+			bancos_sucursals_id = s.GetBancoSucursalId(value.Sucursal_Banco.String, stmt_banco)
 
 			_, err = stmt1.Exec(
 				value.Id, value.Razon_Social, homonimia, value.Fecha_Firma,
@@ -216,32 +216,30 @@ func (s *ServiceSas) GetIdOjetoSocietario(objeto string) int {
 	return objeto_societario_id
 }
 
-func (s *ServiceSas) GetCiudadId(ciudad string, stmt *sql.Stmt) int {
+func (s *ServiceSas) GetCiudadId(ciudad string, stmt *sql.Stmt) sql.NullInt64 {
+	var ciudads_id sql.NullInt64
 	if ciudad == "" {
-		log.Fatalf("El parametro ciudad esta vacio param: %s", ciudad)
+		log.Println("Este registro no contiene ciudad asignada")
+		return ciudads_id
 	}
 
 	if ciudad == "Tata Cua" {
 		ciudad = "Tatacuá"
 	}
 
-	var ciudads_id int
 	err := stmt.QueryRow(ciudad).Scan(&ciudads_id)
 	if err != nil {
-		log.Fatalf("Error al obtener id ciudad: %s - error: %s", ciudad, err)
+		log.Printf("Error al obtener id ciudad: %s - error: %s\n", ciudad, err)
 	}
 
 	return ciudads_id
 }
 
-func (s *ServiceSas) GetFechaCierreFiscal(fecha string, stmt *sql.Stmt) (int, error) {
-	if fecha == "" {
-		log.Fatalf("El parametro fecha esta vacio param: %s", fecha)
-	}
-
-	var fecha_cierre_ejercicios_id int
+func (s *ServiceSas) GetFechaCierreFiscal(fecha string, stmt *sql.Stmt) (sql.NullInt64, error) {
+	var fecha_cierre_ejercicios_id sql.NullInt64
 	err := stmt.QueryRow(fecha).Scan(&fecha_cierre_ejercicios_id)
 	if err != nil {
+		log.Printf("No hay registros de fecha cierre ejercicio para %v - error: %s", fecha, err)
 		return fecha_cierre_ejercicios_id, err
 	}
 
@@ -249,10 +247,6 @@ func (s *ServiceSas) GetFechaCierreFiscal(fecha string, stmt *sql.Stmt) (int, er
 }
 
 func (s *ServiceSas) GetRegimenTributarioId(regimen string, stmt *sql.Stmt) int {
-	if regimen == "" {
-		log.Fatal("No se puede obtener id regimen tributario por parametro nulo")
-	}
-
 	var options = map[string]string{"1": "Régimen convenio multilateral", "0": "Régimen local"}
 	var regimen_tributario_rentas_id int
 
@@ -264,15 +258,16 @@ func (s *ServiceSas) GetRegimenTributarioId(regimen string, stmt *sql.Stmt) int 
 	return regimen_tributario_rentas_id
 }
 
-func (s *ServiceSas) GetBancoSucursalId(banco string, stmt *sql.Stmt) int {
+func (s *ServiceSas) GetBancoSucursalId(banco string, stmt *sql.Stmt) sql.NullInt64 {
+	var bancos_sucursals_id sql.NullInt64
 	if banco == "" {
-		log.Fatalf("El parametro banco esta vacio param: %s", banco)
+		log.Println("Esta sas no tiene banco registrado")
+		return bancos_sucursals_id
 	}
 
-	var bancos_sucursals_id int
 	err := stmt.QueryRow(banco).Scan(&bancos_sucursals_id)
 	if err != nil {
-		log.Fatalf("Error al obtener id bancos sucursales: %s - error: %s", banco, err)
+		log.Printf("Error al obtener id bancos sucursales: %s - error: %s\n", banco, err)
 	}
 
 	return bancos_sucursals_id
