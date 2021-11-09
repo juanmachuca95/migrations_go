@@ -36,3 +36,11 @@ var GetRegimenTributarioId = func() string {
 var GetBancoSucursalId = func() string {
 	return "SELECT id FROM bancos_sucursals WHERE bancos_sucursal=?"
 }
+
+var GetEntidadCertificanteId = func() string {
+	return "SELECT id FROM entidad_certificantes WHERE entidad_certificante=?"
+}
+
+var GetTipoInstrumentoId = func() string {
+	return "SELECT id FROM tipo_instrumentos WHERE tipo_instrumento=?"
+}

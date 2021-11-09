@@ -94,9 +94,7 @@ func (s *ServiceSas) GetSas() ([]models.Sasform, error) {
 func (s *ServiceSas) CreateSAS(sasforms []models.Sasform) (bool, error) {
 	var objeto_especifico_id = s.GetIdOjetoSocietario("Objeto Específico")
 	var objeto_amplio_id = s.GetIdOjetoSocietario("Objeto Amplio")
-	var entidad_certificantes_id = 1 // Escribano
-	var tipo_instrumentos_id = 1     // Instrumento Privado
-	var homonimia = 1                // Homonimia true
+	var homonimia = 1 // Homonimia true
 	var (
 		objeto_societarios_id,
 		regimen_tributario_rentas_id int
@@ -106,6 +104,8 @@ func (s *ServiceSas) CreateSAS(sasforms []models.Sasform) (bool, error) {
 		firma_ciudads_id,
 		fecha_cierre_ejercicios_id,
 		bancos_sucursals_id,
+		entidad_certificantes_id,
+		tipo_instrumentos_id,
 		sede_ciudads_id sql.NullInt64
 	)
 
@@ -146,6 +146,18 @@ func (s *ServiceSas) CreateSAS(sasforms []models.Sasform) (bool, error) {
 	}
 	defer stmt_banco.Close()
 
+	stmt_entidad_certificante, err := s.db2.Prepare(querys.GetEntidadCertificanteId())
+	if err != nil {
+		log.Fatalf("Error al preparar consulta get banco sucursal id - error: %s", err)
+	}
+	defer stmt_entidad_certificante.Close()
+
+	stmt_tipo_instrumento, err := s.db2.Prepare(querys.GetTipoInstrumentoId())
+	if err != nil {
+		log.Fatalf("Error al preparar consulta get banco sucursal id - error: %s", err)
+	}
+	defer stmt_tipo_instrumento.Close()
+
 	for _, value := range sasforms {
 		log.Println(value.Id_Estado, value.Id)
 		if value.Id_Estado <= 6 {
@@ -177,6 +189,12 @@ func (s *ServiceSas) CreateSAS(sasforms []models.Sasform) (bool, error) {
 
 			// Sucursales banco
 			bancos_sucursals_id = s.GetBancoSucursalId(value.Sucursal_Banco.String, stmt_banco)
+
+			// Entidad Certificante
+			entidad_certificantes_id = s.GetEntidadCertificanteId(value.Entidad_Certif.String, stmt_entidad_certificante)
+
+			// Tipo Instrumento
+			tipo_instrumentos_id = s.GetTipoInstrumentoId(value.Tipo_Instrumento.String, stmt_tipo_instrumento)
 
 			_, err = stmt1.Exec(
 				value.Id, value.Razon_Social, homonimia, value.Fecha_Firma,
@@ -286,6 +304,36 @@ func (s *ServiceSas) CreateFechaCierreFiscal(fecha string, stmt *sql.Stmt) bool 
 	}
 
 	return true
+}
+
+func (s *ServiceSas) GetEntidadCertificanteId(entidad string, stmt *sql.Stmt) sql.NullInt64 {
+	var entidad_certificantes_id sql.NullInt64
+	if entidad == "" {
+		log.Println("Este registro sas no contiene entidad certificante registrada")
+		return entidad_certificantes_id
+	}
+
+	err := stmt.QueryRow(entidad).Scan(&entidad_certificantes_id)
+	if err != nil {
+		log.Printf("Error al obtener id entidad certificantes sucursales: %s - error: %s\n", entidad, err)
+	}
+
+	return entidad_certificantes_id
+}
+
+func (s *ServiceSas) GetTipoInstrumentoId(tipo_instrumento string, stmt *sql.Stmt) sql.NullInt64 {
+	var tipo_instrumento_id sql.NullInt64
+	if tipo_instrumento == "" {
+		log.Println("Este registro sas no contiene tipo_instrumento registrada")
+		return tipo_instrumento_id
+	}
+
+	err := stmt.QueryRow(tipo_instrumento).Scan(&tipo_instrumento_id)
+	if err != nil {
+		log.Printf("Error al obtener id tipo instrumento sucursales: %s - error: %s\n", tipo_instrumento, err)
+	}
+
+	return tipo_instrumento_id
 }
 
 /* Registar los logs error de migrations */
