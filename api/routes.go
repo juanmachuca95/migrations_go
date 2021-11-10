@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
@@ -36,23 +35,34 @@ func InitRoute() *mux.Router {
 
 	var home = func(w http.ResponseWriter, r *http.Request) {
 		tmpl := template.Template()
-		var message string
-		_ = json.NewDecoder(r.Body).Decode(&message)
-		/* if err != nil {
-			http.Error(w, err.Error(), 400)
-			return
-		} */
-		log.Println(message)
+		message := r.URL.Query().Get("message")
+		resource := r.URL.Query().Get("resource")
 
-		data := page.Page{
-			Title: "By Juan Machuca",
-			Steps: []page.Step{
-				{Title: "Usuarios", Done: true, Resource: "/users"},
-				{Title: "Personas", Done: false, Resource: "/personas"},
-				{Title: "Administradores", Done: false, Resource: "/admins"},
-				{Title: "SAS", Done: false, Resource: "/sas"},
-			},
+		log.Println(message)
+		data := page.Page{}
+		data.Title = "Juan Machuca: " + message + " - Ha finalizado: " + resource
+
+		initial := "Usuarios"
+
+		data.Steps = []page.Step{
+			{Title: "Usuarios", Done: false, Resource: "/users", Key: "users"},
+			{Title: "Personas", Done: false, Resource: "/personas", Key: "users"},
+			{Title: "Administradores", Done: false, Resource: "/admins", Key: "users"},
+			{Title: "Sas", Done: false, Resource: "/sas", Key: "users"},
+			{Title: "Socios", Done: false, Resource: "/socios", Key: "users"},
 		}
+
+		for index, value := range data.Steps {
+			if value.Key == resource {
+				value.Done = false
+				data.Steps[index+1].Done = true
+			}
+		}
+
+		log.Println(data.Steps)
+
+		log.Println(initial)
+
 		tmpl.Execute(w, data)
 	}
 

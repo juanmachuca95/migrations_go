@@ -1,8 +1,7 @@
 package admins
 
 import (
-	"bytes"
-	"encoding/json"
+	"fmt"
 	"net/http"
 
 	gtw "github.com/juanmachuca95/migrations_go/admins/gateways"
@@ -34,11 +33,7 @@ func (s *AdminsHTTPService) GetAdminsHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	resp := map[string]string{"message": "Se ha registrado correctamente los administradores sas."}
-	jsonResp, _ := json.Marshal(resp)
-
-	req, _ := http.NewRequest("GET", "/", bytes.NewBuffer(jsonResp))
-	req.Header.Set("Content-Type", "application/json")
-
-	http.Redirect(w, req, "/", http.StatusFound)
+	message := "Se ha registrado correctamente los administradores sas."
+	urlReturn := fmt.Sprintf("/?message=%s&resource=admins", message)
+	http.Redirect(w, r, urlReturn, http.StatusFound)
 }
