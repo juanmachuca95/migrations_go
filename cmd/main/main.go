@@ -14,17 +14,17 @@ import (
 func main() {
 
 	var message, resource string
+	message = "test"
+	resource = "admins"
 	data := page.Page{}
 	data.Title = "Juan Machuca: " + message + " - Ha finalizado: " + resource
 
-	initial := "Usuarios"
-
 	data.Steps = []page.Step{
 		{Title: "Usuarios", Done: false, Resource: "/users", Key: "users"},
-		{Title: "Personas", Done: false, Resource: "/personas", Key: "users"},
-		{Title: "Administradores", Done: false, Resource: "/admins", Key: "users"},
-		{Title: "Sas", Done: false, Resource: "/sas", Key: "users"},
-		{Title: "Socios", Done: false, Resource: "/socios", Key: "users"},
+		{Title: "Personas", Done: false, Resource: "/personas", Key: "personas"},
+		{Title: "Administradores", Done: false, Resource: "/admins", Key: "admins"},
+		{Title: "Sas", Done: false, Resource: "/sas", Key: "sas"},
+		{Title: "Socios", Done: false, Resource: "/socios", Key: "socios"},
 	}
 
 	for index, value := range data.Steps {
@@ -34,9 +34,14 @@ func main() {
 		}
 	}
 
-	log.Println(data.Steps)
+	var selected string
+	for _, value := range data.Steps {
+		if value.Done {
+			selected = value.Resource
+		}
+	}
 
-	log.Println(initial)
+	log.Printf("Recurso elegido es: %s", selected)
 
 	log.Fatal("terminar")
 
