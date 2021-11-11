@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"net/http"
 
 	gtw "github.com/juanmachuca95/migrations_go/users/gateways"
@@ -30,5 +31,7 @@ func (s *UsersHTTPService) GetUsersHandler(w http.ResponseWriter, r *http.Reques
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	w.WriteHeader(http.StatusOK)
+	message := "Se ha registrado correctamente los usuarios sas."
+	urlReturn := fmt.Sprintf("/?message=%s&resource=users", message)
+	http.Redirect(w, r, urlReturn, http.StatusFound)
 }

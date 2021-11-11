@@ -23,3 +23,15 @@ SAS BENEFICIARIOS -- SAS SOCIOS .. NO TIENEN LA MISMA CANTIDAD DE ACCIONES.
 SELECT socios.id AS socios_id, beneficiarios.id AS beneficiarios_id, socios.representado AS representado, socios.firma AS firma, beneficiarios.porcentaje AS porcentaje, beneficiarios.acciones AS acciones_beneficiarios, socios.cantAcciones AS acciones_socios, sas.id AS sas_id FROM sassocios as socios INNER JOIN sasbeneficiarios as beneficiarios ON socios.idPersona = beneficiarios.idPersona INNER JOIN saspersonas as personas ON personas.id = socios.idPersona AND personas.id = beneficiarios.idPersona INNER JOIN sasform as sas ON sas.id = personas.idSAS WHERE socios.cantAcciones != beneficiarios.acciones;
 
 */
+
+/*
+CONSULTA QUE OBTIENE TODOS LOS ID DE PERSONA QUE NO EXISTEN EN TABLA SASPERSONAS DE LA TABLA SASSOCIOS
+SELECT socios.idPersona FROM sassocios AS socios WHERE socios.idPersona NOT IN (SELECT personas.id FROM saspersonas AS personas);
+
+
+CONSULTA QUE OBTIENE TODOS LOS ID DE PERSONA QUE (NO EXISTEN EN ID PERSONA CON RESPECTO A SASSOCIO)
+SELECT sasbeneficiarios.idPersona FROM sasbeneficiarios WHERE sasbeneficiarios.idPersona IN (SELECT socios.idPersona FROM sassocios AS socios WHERE socios.idPersona NOT IN (SELECT personas.id FROM saspersonas AS personas));
+
+
+
+*/

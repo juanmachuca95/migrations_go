@@ -8,10 +8,7 @@ type Step struct {
 }
 
 type Page struct {
-	Steps []Step
-	Title string
-}
-
-func NewPage() {
-
+	Steps   []Step
+	Title   string
+	Message string
 }

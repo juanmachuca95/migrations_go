@@ -1,7 +1,7 @@
 package personas
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 
 	gtw "github.com/juanmachuca95/migrations_go/personas/gateways"
@@ -18,12 +18,12 @@ func NewPersonasHTTPServices() *PersonasHTTPServices {
 }
 
 func (s *PersonasHTTPServices) GetPersonasHandler(w http.ResponseWriter, r *http.Request) {
-	resp, err := s.gtw.GetPersonas()
+	_, err := s.gtw.GetPersonas()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	log.Println(resp)
-
-	w.WriteHeader(200)
+	message := "Se ha registrado correctamente las personas sas."
+	urlReturn := fmt.Sprintf("/?message=%s&resource=personas", message)
+	http.Redirect(w, r, urlReturn, http.StatusFound)
 }

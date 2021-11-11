@@ -1,8 +1,7 @@
 package sas
 
 import (
-	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 
 	models "github.com/juanmachuca95/migrations_go/sas/models"
@@ -30,15 +29,12 @@ func (s *SasHTTPService) GetSasHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	jsonResp, err := json.Marshal(sasforms)
-	if err != nil {
-		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
-	}
-
 	_, err = s.gtw.CreateSAS(sasforms) // Insert de sas en bd sass
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	w.Write(jsonResp)
+	message := "Se ha registrado correctamente las sas."
+	urlReturn := fmt.Sprintf("/?message=%s&resource=sas", message)
+	http.Redirect(w, r, urlReturn, http.StatusFound)
 }
