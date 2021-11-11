@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 
 	admins "github.com/juanmachuca95/migrations_go/admins/handlers"
+	apoderados "github.com/juanmachuca95/migrations_go/apoderados/handlers"
 	home "github.com/juanmachuca95/migrations_go/home/handlers"
 	personas "github.com/juanmachuca95/migrations_go/personas/handlers"
 	sas "github.com/juanmachuca95/migrations_go/sas/handlers"
@@ -18,6 +19,7 @@ func InitRoute() *mux.Router {
 	home := home.NewHomeHTTPService()
 	sas := sas.NewSasHTTPService()
 	admins := admins.NewAdminsHTTPService()
+	apoderados := apoderados.NewApoderadosHTTPService()
 	users := users.NewUsersHTTPService()
 	personas := personas.NewPersonasHTTPServices()
 
@@ -37,6 +39,8 @@ func InitRoute() *mux.Router {
 	// AdminHTTServices
 	rAdmins := r.PathPrefix("/admins").Subrouter()
 	rAdmins.HandleFunc("", admins.GetAdminsHandler).Methods("GET")
+
+	r.HandleFunc("/apoderados", apoderados.GetApoderadosHandler).Methods("GET")
 
 	// UsersHTTPServices
 	rUsers := r.PathPrefix("/users").Subrouter()
