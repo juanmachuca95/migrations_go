@@ -39,9 +39,9 @@
           
           {{ range  .Steps}}
             {{ if .Done }}
-            <a href="{{ .Resource }}" class="btn btn-info btn-lg shadow-sm text-white">{{.Title}}</a>
+            <a href="{{ .Resource }}" class="btn btn-info btn-lg shadow-sm text-white m-1">{{.Title}}</a>
             {{else}}
-            <a href="{{ .Resource }}" class="btn btn-warning btn-lg shadow-sm disabled">{{.Title}}</a>        
+            <a href="{{ .Resource }}" class="btn btn-warning btn-lg shadow-sm disabled m-1">{{.Title}}</a>        
             {{end}}
           {{end}}
   
