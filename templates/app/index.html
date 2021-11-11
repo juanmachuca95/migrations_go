@@ -11,54 +11,45 @@
     <div class="container">  
       
       {{ template "parts/header.html" .}}
+      <hr class="p-0">
+      <div class="p-5 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+          <h1 class="display-5 fw-bold">
+            <font style="vertical-align: inherit;">
+              <font style="vertical-align: inherit;">Migración golang</font>
+            </font>
+          </h1>
+  
+          <p class="col-md-8 fs-4">
+            <font style="vertical-align: inherit;">
+              <font style="vertical-align: inherit;">
+                <strong>Importante!</strong> Verificar la base datos de destino.
+                <a class="text-decoration-none" href="https://app.mural.co/t/codexdev1896/m/codexdev1896/1635788265945/eb9579b37715b35e432f1d321db3e88463d456f5?sender=u1a4291e25b08cfa7349d5520">Checkear link de pasos.</a>
+              </font>
+            </font>
+          </p>
+        
+          {{ if .Message }}
+          <div class="alert alert-success" role="alert">
+            {{ .Message }}
+          </div>
+          {{ end }}
+  
+          {{ if ge (len .Steps) 1 }}
+          
+          {{ range  .Steps}}
+            {{ if .Done }}
+            <a href="{{ .Resource }}" class="btn btn-info btn-lg shadow-sm text-white">{{.Title}}</a>
+            {{else}}
+            <a href="{{ .Resource }}" class="btn btn-warning btn-lg shadow-sm disabled">{{.Title}}</a>        
+            {{end}}
+          {{end}}
+  
+          {{end}}
+  
+        </div> 
+      </div> 
       
-      <h2 class="lead py-5">Migración golang</h2>
-      
-      <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <h4>
-          <strong>Importante!</strong> Requisitos previos a la migración.
-        </h4>
-        <ul class="m-0">
-          <li>
-            <h6 class="mb-1">La base de datos destino debe contener:</h6>
-            <small>
-              Los paises, provincias y ciudades cargadas previamente.
-              Importante antes ejecutar el handler /personas/.
-            </small>
-          </li>
-          <li>
-            <h6 class="mb-1">
-              Las tablas de destino de migración deben estar vacias: 
-            </h6>
-            <small>
-              Esto evitará duplicados.
-              Importante antes ejecutar el handler /personas/.
-            </small>
-          </li>
-        </ul>
-
-
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-
-      {{ if .Message }}
-      <div class="alert alert-success" role="alert">
-        {{ .Message }}
-      </div>
-      {{ end }}
-
-      {{ if ge (len .Steps) 1 }}
-      
-      {{ range  .Steps}}
-        {{ if .Done }}
-        <a href="{{ .Resource }}" class="btn btn-info shadow-sm text-white">{{.Title}}</a>
-        {{else}}
-        <a href="{{ .Resource }}" class="btn btn-warning shadow-sm disabled">{{.Title}}</a>        
-        {{end}}
-      {{end}}
-
-      {{end}}
-
     </div>
     
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
