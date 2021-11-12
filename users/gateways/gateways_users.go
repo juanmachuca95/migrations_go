@@ -78,7 +78,7 @@ func (s *UsersService) CreateUsersSAS(users []models.User) (bool, error) {
 	for _, value := range users {
 
 		// Storage image
-		s.StorageImageUser(*value.Img_Url)
+		s.StorageImageUser(value.Img_Url.String)
 
 		_, err := stmt.Exec(value.Id, value.Apellido, value.Name, value.Cuit, value.Email, value.Password, value.Block, value.Created_At, value.Updated_At, value.Img_Url)
 		if err != nil {
@@ -94,7 +94,11 @@ func (s *UsersService) CreateUsersSAS(users []models.User) (bool, error) {
 func (s *UsersService) StorageImageUser(image_url string) (bool, error) {
 
 	// Guardar imagen de perfil //https://igpjtesting.corrientes.gob.ar/imagenes/usuariosRegistrados/e1b3724141657679222d55ff4801d748.jpg
-	log.Println(image_url)
+	if image_url != "" {
+		log.Println(image_url)
+	} else {
+		return true, nil
+	}
 
 	log.Fatal("Parar")
 	// Minio archivos

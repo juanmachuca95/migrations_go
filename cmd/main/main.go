@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("No se han podido cargar las variables de entorno.")
