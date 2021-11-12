@@ -140,6 +140,8 @@ func (s *ServicePersona) CreatePersonasSAS(personas []models.Persona) (bool, err
 			s.Logg(errLog)
 		}
 
+		// Guardar imagen de perfil //https://igpjtesting.corrientes.gob.ar/imagenes/usuariosRegistrados/e1b3724141657679222d55ff4801d748.jpg
+
 	}
 
 	return true, nil
