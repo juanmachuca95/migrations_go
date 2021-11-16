@@ -1,6 +1,7 @@
 package socios
 
 import (
+	"fmt"
 	"net/http"
 
 	gtw "github.com/juanmachuca95/migrations_go/socios/gateways"
@@ -31,7 +32,7 @@ func (s *SociosHTTPServices) GetSociosHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	w.WriteHeader(http.StatusOK)
-	/* message := "Se ha registrado correctamente los socios sas."
+	message := "Se ha registrado correctamente los socios sas."
 	urlReturn := fmt.Sprintf("/?message=%s&resource=socios", message)
-	http.Redirect(w, r, urlReturn, http.StatusFound) */
+	http.Redirect(w, r, urlReturn, http.StatusFound)
 }
