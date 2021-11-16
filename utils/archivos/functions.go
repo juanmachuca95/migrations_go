@@ -1,7 +1,8 @@
 package archivos
 
 import (
-	"io"
+	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -9,25 +10,28 @@ import (
 	"github.com/minio/minio-go"
 )
 
-func DescargarArchivoDeInternet(url string) (string, error) {
-	/*
-		En este caso voy a descargar una imagen PNG
-	*/
-	//nombreArchivoSalida := "imagen.png"
-	nombreArchivoSalida := "imagen.jpg"
-
+func DownloadFileOnline(url string, nameFile string) (string, error) {
+	nombreArchivoSalida := nameFile + ".jpg"
+	log.Printf("La url es: %s", url)
+	log.Printf("nombre del archivo: %s", nombreArchivoSalida)
 	respuesta, err := http.Get(url)
 	if err != nil {
 		return "", err
 	}
 	defer respuesta.Body.Close()
-	archivoSalida, err := os.Create(nombreArchivoSalida)
-	if err != nil {
+
+	if respuesta.StatusCode != 200 {
+		err := errors.New("el archivo no existe")
 		return "", err
 	}
-	defer archivoSalida.Close()
-	_, err = io.Copy(archivoSalida, respuesta.Body)
-	return nombreArchivoSalida, err
+
+	data, err := ioutil.ReadAll(respuesta.Body)
+	if err != nil {
+		log.Fatalf("ioutil.ReadAll -> %v", err)
+	}
+
+	ioutil.WriteFile(nombreArchivoSalida, data, 0666)
+	return nombreArchivoSalida, nil
 }
 
 func CheckBucket(minio minio.Client, bucketName string) (bool, error) {

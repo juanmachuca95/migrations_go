@@ -141,3 +141,15 @@ func Month(month string) int {
 
 	return number_month
 }
+
+func LoteTest() []string {
+	var imagenes_test = []string{
+		"public/imagenes/usuariosRegistrados/0b68d20f927263cce80acd3e00e22b55_th",
+		"public/imagenes/usuariosRegistrados/0b68d20f927263cce80acd3e00e22b55",
+		"public/imagenes/usuariosRegistrados/3c51067bcb8c964fe9cdd7d73c6c5fd5_th",
+		"public/imagenes/usuariosRegistrados/3c51067bcb8c964fe9cdd7d73c6c5fd5",
+		"public/imagenes/usuariosRegistrados/noquieroqueencuentresestaimagen", // failed
+	}
+
+	return imagenes_test
+}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"strings"
 
 	files "github.com/juanmachuca95/migrations_go/utils/archivos"
 
@@ -78,9 +79,9 @@ func (s *UsersService) CreateUsersSAS(users []models.User) (bool, error) {
 	for _, value := range users {
 
 		// Storage image
-		s.StorageImageUser(value.Img_Url.String)
+		image_url, _ := s.StorageImageUser(value.Img_Url.String)
 
-		_, err := stmt.Exec(value.Id, value.Apellido, value.Name, value.Cuit, value.Email, value.Password, value.Block, value.Created_At, value.Updated_At, value.Img_Url)
+		_, err := stmt.Exec(value.Id, value.Apellido, value.Name, value.Cuit, value.Email, value.Password, value.Block, value.Created_At, value.Updated_At, image_url)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -91,42 +92,53 @@ func (s *UsersService) CreateUsersSAS(users []models.User) (bool, error) {
 	return true, nil
 }
 
-func (s *UsersService) StorageImageUser(image_url string) (bool, error) {
-
-	// Guardar imagen de perfil //https://igpjtesting.corrientes.gob.ar/imagenes/usuariosRegistrados/e1b3724141657679222d55ff4801d748.jpg
-	if image_url != "" {
-		log.Println(image_url)
-	} else {
-		return true, nil
+// Guardar imagen de perfil //https://igpjtesting.corrientes.gob.ar/imagenes/usuariosRegistrados/e1b3724141657679222d55ff4801d748.jpg
+func (s *UsersService) StorageImageUser(image_url string) (string, error) {
+	if image_url == "" {
+		return "", nil
 	}
 
-	log.Fatal("Parar")
+	url := os.Getenv("APP_URL_JUSTICIA")
+	directory := "/imagenes/usuariosRegistrados/"
+
+	value := strings.TrimPrefix(image_url, "public")
+	imageName := strings.TrimPrefix(value, directory)
+	routeFile := url + directory + imageName + ".jpg"
+
+	imageDownloaded, err := files.DownloadFileOnline(routeFile, imageName)
+	if err != nil {
+		return "", err
+	}
+
 	// Minio archivos
 	minioClient, err := minio.New(os.Getenv("MINIO_ENDPOINT"), os.Getenv("MINIO_ACCESS_KEY_ID"), os.Getenv("MINIO_SECRET_ACCESS_KEY"), true)
 	if err != nil {
 		log.Fatalf("El minioClient ha arrojado un error: %v", err)
 	}
 
-	// Carpeta de almacenamiento en Minio
-	bucketName := ""
+	/*
+		Carpeta de almacenamiento en Minio
+		El nombre de la carpeta no debe tener caracteres especiales
+	*/
+	bucketName := "sasusersprofile"
 	_, err = files.CheckBucket(*minioClient, bucketName)
 	if err != nil {
 		log.Fatalf("Bucket invalido - error: %s", err)
 	}
 
 	// Data archivo a almacenar
-	objectName := "miprimerimagen.jpg"
-	filePath := "imagen.jpg"
 	contentType := "image/jpeg"
-
+	log.Println("**********************************************************")
+	filePath := imageDownloaded // path image
 	if _, err := os.Stat(filePath); errors.Is(err, os.ErrNotExist) {
-		log.Fatal("NO EXISTE EL ARCHIVO")
+		log.Fatal("la imagen guardada no existe en la api go.")
 	}
 
+	objectName := imageDownloaded // Nombre del archivo
 	_, err = minioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	return true, nil
+	return imageDownloaded, nil
 }

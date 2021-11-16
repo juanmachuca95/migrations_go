@@ -11,6 +11,7 @@ import (
 	personas "github.com/juanmachuca95/migrations_go/personas/handlers"
 	rentas "github.com/juanmachuca95/migrations_go/rentas/handlers"
 	sas "github.com/juanmachuca95/migrations_go/sas/handlers"
+	socios "github.com/juanmachuca95/migrations_go/socios/handlers"
 	users "github.com/juanmachuca95/migrations_go/users/handlers"
 )
 
@@ -19,6 +20,7 @@ func InitRoute() *mux.Router {
 
 	home := home.NewHomeHTTPService()
 	sas := sas.NewSasHTTPService()
+	socios := socios.NewSociosHTTPService()
 	admins := admins.NewAdminsHTTPService()
 	apoderados := apoderados.NewApoderadosHTTPService()
 	rentas := rentas.NewRentasHTTPService()
@@ -37,6 +39,9 @@ func InitRoute() *mux.Router {
 
 	// SasHTTPServices
 	r.HandleFunc("/sas", sas.GetSasHandler).Methods("GET")
+
+	// SociosHTTPServices
+	r.HandleFunc("/socios", socios.GetSociosHandler).Methods("GET")
 
 	// AdminHTTServices
 	rAdmins := r.PathPrefix("/admins").Subrouter()

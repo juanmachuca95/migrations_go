@@ -3,7 +3,11 @@ package socios
 /* ENTENDER QUE SON LOS BENEFICIARIOS Y EN QUE SE DIFERENCIAN DE LOS SOCIOS */
 
 var GetSocios = func() string {
-	return "SELECT * FROM `sassocios` INNER JOIN sasbeneficiarios ON sassocios.idPersona = sasbeneficiarios.idPersona;"
+	return "SELECT socios.id, socios.idPersona, sas.id, socios.cantAcciones, beneficiarios.acciones, beneficiarios.porcentaje, socios.firma, socios.representado, socios.created_at, socios.updated_at FROM sassocios as socios INNER JOIN sasbeneficiarios as beneficiarios ON socios.idPersona = beneficiarios.idPersona INNER JOIN saspersonas as personas ON personas.id = socios.idPersona AND personas.id = beneficiarios.idPersona INNER JOIN sasform as sas ON sas.id = personas.idSAS;"
+}
+
+var CreateSociosSAS = func() string {
+	return "INSERT INTO sass_socios (id, carga_capital_invertido, porcentaje, created_at, updated_at, sass_id, personas_id) VALUES (?,?,?,?,?,?,?)"
 }
 
 /**
@@ -11,10 +15,6 @@ INNER JOIN socios, personas, beneficiarios, sas
 
 SELECT socios.idPersona, beneficiarios.idPersona, sas.id FROM sassocios as socios INNER JOIN sasbeneficiarios as beneficiarios ON socios.idPersona = beneficiarios.idPersona INNER JOIN saspersonas as personas ON personas.id = socios.idPersona AND personas.id = beneficiarios.idPersona INNER JOIN sasform as sas ON sas.id = personas.idSAS;
 */
-
-var GetSociosBeneficiariosSas = func() string {
-	return "SELECT socios.representado AS representado, socios.firma AS firma, beneficiarios.porcentaje AS porcentaje, beneficiarios.acciones, sas.id AS sas_id FROM sassocios as socios INNER JOIN sasbeneficiarios as beneficiarios ON socios.idPersona = beneficiarios.idPersona INNER JOIN saspersonas as personas ON personas.id = socios.idPersona AND personas.id = beneficiarios.idPersona INNER JOIN sasform as sas ON sas.id = personas.idSAS;"
-}
 
 /*
 CONSULTA DONDE SE COMPRUEBA QUE EXISTEN DATOS QUE NO SON LO MISMO
