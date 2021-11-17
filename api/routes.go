@@ -7,6 +7,7 @@ import (
 
 	admins "github.com/juanmachuca95/migrations_go/admins/handlers"
 	apoderados "github.com/juanmachuca95/migrations_go/apoderados/handlers"
+	escribanos "github.com/juanmachuca95/migrations_go/escribanos/handlers"
 	home "github.com/juanmachuca95/migrations_go/home/handlers"
 	personas "github.com/juanmachuca95/migrations_go/personas/handlers"
 	rentas "github.com/juanmachuca95/migrations_go/rentas/handlers"
@@ -18,11 +19,12 @@ import (
 func InitRoute() *mux.Router {
 	r := mux.NewRouter()
 
+	admins := admins.NewAdminsHTTPService()
+	apoderados := apoderados.NewApoderadosHTTPService()
+	escribanos := escribanos.NewEscribanosHTTPService()
 	home := home.NewHomeHTTPService()
 	sas := sas.NewSasHTTPService()
 	socios := socios.NewSociosHTTPService()
-	admins := admins.NewAdminsHTTPService()
-	apoderados := apoderados.NewApoderadosHTTPService()
 	rentas := rentas.NewRentasHTTPService()
 	users := users.NewUsersHTTPService()
 	personas := personas.NewPersonasHTTPServices()
@@ -34,6 +36,16 @@ func InitRoute() *mux.Router {
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/",
 		http.FileServer(http.Dir("./assets/"))))
 
+	// AdminHTTServices
+	rAdmins := r.PathPrefix("/admins").Subrouter()
+	rAdmins.HandleFunc("", admins.GetAdminsHandler).Methods("GET")
+
+	// ApoderadosHTTPServices
+	r.HandleFunc("/apoderados", apoderados.GetApoderadosHandler).Methods("GET")
+
+	// EscribanosHTTPService
+	r.HandleFunc("/escribanos", escribanos.GetEscribanosHandler).Methods("GET")
+
 	// HomeHTTPServices
 	r.HandleFunc("/", home.HomeHandler).Methods("GET")
 
@@ -42,13 +54,6 @@ func InitRoute() *mux.Router {
 
 	// SociosHTTPServices
 	r.HandleFunc("/socios", socios.GetSociosHandler).Methods("GET")
-
-	// AdminHTTServices
-	rAdmins := r.PathPrefix("/admins").Subrouter()
-	rAdmins.HandleFunc("", admins.GetAdminsHandler).Methods("GET")
-
-	// ApoderadosHTTPServices
-	r.HandleFunc("/apoderados", apoderados.GetApoderadosHandler).Methods("GET")
 
 	// RentasHTTPServices
 	r.HandleFunc("/rentas", rentas.GetRentasHandler).Methods("GET")

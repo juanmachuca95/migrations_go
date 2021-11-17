@@ -23,8 +23,10 @@ func NewInitPage(resource, message string) models.Page {
 		{Title: "Sas", Done: false, Resource: "/sas", Key: "sas"},
 		{Title: "Administradores", Done: false, Resource: "/admins", Key: "admins"},
 		{Title: "Apoderados", Done: false, Resource: "/apoderados", Key: "apoderados"},
-		{Title: "Rentas", Done: false, Resource: "/rentas", Key: "rentas"},
+
+		/* {Title: "Rentas", Done: false, Resource: "/rentas", Key: "rentas"}, */
 		{Title: "Socios", Done: false, Resource: "/socios", Key: "socios"},
+		{Title: "Escribanos", Done: false, Resource: "/escribanos", Key: "escribanos"},
 
 		{Title: "Migración finalizada", Done: false, Resource: "/success", Key: "success"},
 	}
